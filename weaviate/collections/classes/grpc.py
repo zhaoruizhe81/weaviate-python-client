@@ -286,7 +286,8 @@ class DecideOrder(str, Enum):
 class Decide(Rerank):
     """Rerank by a decision model.
 
-    The collection's decisions module answers `query` as a yes/no question about every candidate, the probability
+    The collection's decisions module answers `query` as a yes/no question about every candidate (the text of
+    `prop`, or the image of a `blob` property for a module that judges images), the probability
     is the rerank score, and the candidates below `min_probability` are dropped. Pass it as the `rerank` argument
     of a query. The collection needs a decisions module (`decisions_config`); a reranker it may also have keeps
     serving `rerank=Rerank(...)`. An argument left `None` takes the class setting of the module. The page can hold
@@ -356,7 +357,8 @@ class Decision:
     """Use this factory class to build the questions of the `decide` argument of a query.
 
     The collection's decisions module (`decisions_config`) answers every question for every object the query
-    returns. Each question is about one text property of the objects and has a name that identifies its answer.
+    returns. Each question is about one property of the objects, text or an image in a `blob` property when the
+    module judges images, and has a name that identifies its answer.
     `decide` never drops or reorders an object; to filter by a condition, pass `Decide(...)` as the `rerank`
     argument instead.
     """
@@ -367,7 +369,7 @@ class Decision:
 
         Args:
             name: The name of the answer, unique within the query.
-            prop: The text property the question is about.
+            prop: The property the question is about: text, or a `blob` image for a module that judges images.
             instructions: The statement or question to evaluate, for example "the customer is angry".
         """
         return _DecidePredicate(name=name, prop=prop, instructions=instructions)
@@ -384,7 +386,7 @@ class Decision:
 
         Args:
             name: The name of the answer, unique within the query.
-            prop: The text property the question is about.
+            prop: The property the question is about: text, or a `blob` image for a module that judges images.
             instructions: What to decide, for example "which team should handle this ticket?".
             options: The options, as names or as a mapping of names to descriptions. At least two.
         """
@@ -409,7 +411,7 @@ class Decision:
 
         Args:
             name: The name of the answer, unique within the query.
-            prop: The text property the question is about.
+            prop: The property the question is about: text, or a `blob` image for a module that judges images.
             instructions: What to rate, for example "how urgent is this ticket?".
             levels: The levels from lowest to highest, as labels or as a mapping of labels to descriptions. At least two.
         """
